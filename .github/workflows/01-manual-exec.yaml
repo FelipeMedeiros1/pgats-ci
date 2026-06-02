@@ -1,5 +1,5 @@
 # CI de Nível 01 - Disparo Manual através de clique
-
+#teste2e - Playwright
 # nome da pipeline
 name: "Execução Manual"
 
