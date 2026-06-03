@@ -39,6 +39,33 @@ jobs:
             - name: Instalando Browsers do Playwright
               run: yarn playwright install
             
-            # executar os testes e2e
+            # executar os testes e2e (gera results.json, results.xml e playwright-report/)
             - name: Executando testes e2e
               run: yarn run e2e
+
+            # -------------------------------------------------------
+            # Relatório de testes via Marketplace:
+            # daun/playwright-report-summary@v4
+            # https://github.com/marketplace/actions/playwright-report-comment
+            # Lê o results.json do Playwright e publica:
+            #   • sumário na aba "Summary" da execução (job-summary)
+            #   • comentário automático em Pull Requests (create-comment)
+            # -------------------------------------------------------
+            - name: Publicando resumo dos testes e2e
+              uses: daun/playwright-report-summary@v4
+              if: always()
+              with:
+                  report-file: results.json
+                  job-summary: true
+                  comment-title: "Resultados dos Testes E2E"
+                  icon-style: emojis
+                  sections: "failed, flaky, skipped, passed"
+
+            # upload do relatório HTML como artefato para download
+            - name: Upload do relatório HTML
+              uses: actions/upload-artifact@v4
+              if: always()
+              with:
+                  name: playwright-report
+                  path: playwright-report/
+                  retention-days: 7
