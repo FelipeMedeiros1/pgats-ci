@@ -1,7 +1,7 @@
 # CI de Nível 04 - Integrada ao Build do codigo (após aprovação de PR)
 #teste2e - Playwright
 # nome da pipeline
-name: 'Execução Integrada'
+name: 'N4 Execução Integrada'
 
 # gatilhos / triggers - regras de disparo
 # gatilho integrado = push em branch protegida + aprovação de PR

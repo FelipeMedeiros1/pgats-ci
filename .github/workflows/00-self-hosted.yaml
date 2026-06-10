@@ -1,7 +1,7 @@
-# CI de Nível 02 - Execução em Self-Hosted Runner
+# CI de Nível 00 - Execução em Self-Hosted Runner
 # teste e2e - Playwright
 # nome da pipeline
-name: 'Self-Hosted Runner'
+name: 'N0 Self-Hosted Runner'
 
 # gatilho manual
 on:

@@ -1,7 +1,7 @@
 # CI de Nível 03 - disparo por deploy (após merge na main)
 #teste2e - Playwright
 # nome da pipeline
-name: 'Execução por-deploy'
+name: 'N3 Execução por-deploy'
 
 # gatilhos / triggers - regras de disparo
 # gatilho por conclusão de outra pipeline = workflow_run

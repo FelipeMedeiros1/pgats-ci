@@ -1,7 +1,7 @@
-# CI de Nível 01 - Disparo automático por agendamento
+# CI de Nível 02 - Disparo automático por agendamento
 #teste2e - Playwright
 # nome da pipeline
-name: 'Execução Agendada'
+name: 'N2 Execução Agendada'
 
 # gatilhos / triggers - regras de disparo
 # gatilho automático por agendamento = schedule
