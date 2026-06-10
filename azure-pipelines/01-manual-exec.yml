@@ -1,7 +1,7 @@
 # CI de Nível 01 - Disparo Manual através de clique
 # teste e2e - Playwright
 # nome da pipeline
-name: "Execução Manual"
+name: 'Execução Manual'
 
 # gatilho manual no Azure DevOps
 trigger: none
@@ -9,7 +9,7 @@ trigger: none
 # permite disparo manual pela UI do Azure DevOps
 parameters:
   - name: executar
-    displayName: "Executar pipeline"
+    displayName: 'Executar pipeline'
     type: boolean
     default: true
 
@@ -17,7 +17,7 @@ parameters:
 jobs:
   # nome do job
   - job: e2e_tests
-    displayName: "e2e-tests"
+    displayName: 'e2e-tests'
 
     # máquina onde o job vai rodar
     pool:
@@ -29,22 +29,22 @@ jobs:
 
       # instalação do Node
       - task: NodeTool@0
-        displayName: "Instalando Node"
+        displayName: 'Instalando Node'
         inputs:
-          versionSpec: "24.x"
+          versionSpec: '24.x'
 
       # instalação do Yarn
       - script: npm install -g yarn
-        displayName: "Instalando Yarn"
+        displayName: 'Instalando Yarn'
 
       # instalação das dependências
       - script: yarn
-        displayName: "Instalando dependências"
+        displayName: 'Instalando dependências'
 
       # instalação dos Browsers do Playwright
       - script: yarn playwright install
-        displayName: "Instalando Browsers do Playwright"
+        displayName: 'Instalando Browsers do Playwright'
 
       # executar os testes e2e
       - script: yarn run e2e
-        displayName: "Executando testes e2e"
+        displayName: 'Executando testes e2e'

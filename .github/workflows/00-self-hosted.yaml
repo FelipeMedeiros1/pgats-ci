@@ -1,70 +1,70 @@
 # CI de Nível 02 - Execução em Self-Hosted Runner
 # teste e2e - Playwright
 # nome da pipeline
-name: "Self-Hosted Runner"
+name: 'Self-Hosted Runner'
 
 # gatilho manual
 on:
-    workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
-    e2e-tests:
-        # -------------------------------------------------------
-        # self-hosted: usa a máquina registrada como runner local
-        # Labels adicionais permitem filtrar runners específicos:
-        #   [self-hosted, linux, x64]   → runner Linux 64-bit
-        #   [self-hosted, windows, x64] → runner Windows 64-bit
-        #   [self-hosted, macos]        → runner macOS
-        # Para registrar: Settings > Actions > Runners > New self-hosted runner
-        # -------------------------------------------------------
-        runs-on: self-hosted
+  e2e-tests:
+    # -------------------------------------------------------
+    # self-hosted: usa a máquina registrada como runner local
+    # Labels adicionais permitem filtrar runners específicos:
+    #   [self-hosted, linux, x64]   → runner Linux 64-bit
+    #   [self-hosted, windows, x64] → runner Windows 64-bit
+    #   [self-hosted, macos]        → runner macOS
+    # Para registrar: Settings > Actions > Runners > New self-hosted runner
+    # -------------------------------------------------------
+    runs-on: self-hosted
 
-        steps:
-            # clone do projeto
-            - uses: actions/checkout@v4
+    steps:
+      # clone do projeto
+      - uses: actions/checkout@v4
 
-            # instalação do Node
-            # Mantida mesmo em self-hosted para garantir a versão correta.
-            # Em runners reutilizáveis, o Node pode já estar instalado;
-            # este step sobrescreve se necessário.
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: 24.x
+      # instalação do Node
+      # Mantida mesmo em self-hosted para garantir a versão correta.
+      # Em runners reutilizáveis, o Node pode já estar instalado;
+      # este step sobrescreve se necessário.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
 
-            # instalação do Yarn
-            - name: Instalando Yarn
-              run: npm install -g yarn
+      # instalação do Yarn
+      - name: Instalando Yarn
+        run: npm install -g yarn
 
-            # instalação das dependências
-            - name: Instalando dependências
-              run: yarn
+      # instalação das dependências
+      - name: Instalando dependências
+        run: yarn
 
-            # instalação dos Browsers do Playwright
-            # Em self-hosted, os browsers podem já estar em cache na máquina.
-            # O Playwright só reinstala se a versão mudou.
-            - name: Instalando Browsers do Playwright
-              run: yarn playwright install
+      # instalação dos Browsers do Playwright
+      # Em self-hosted, os browsers podem já estar em cache na máquina.
+      # O Playwright só reinstala se a versão mudou.
+      - name: Instalando Browsers do Playwright
+        run: yarn playwright install
 
-            # executar os testes e2e
-            - name: Executando testes e2e
-              run: yarn run e2e
+      # executar os testes e2e
+      - name: Executando testes e2e
+        run: yarn run e2e
 
-            # publicar resumo dos testes
-            - name: Publicando resumo dos testes e2e
-              uses: daun/playwright-report-summary@v4
-              if: always()
-              with:
-                  report-file: results.json
-                  job-summary: true
-                  comment-title: "Resultados dos Testes E2E (Self-Hosted)"
-                  icon-style: emojis
-                  sections: "failed, flaky, skipped, passed"
+      # publicar resumo dos testes
+      - name: Publicando resumo dos testes e2e
+        uses: daun/playwright-report-summary@v4
+        if: always()
+        with:
+          report-file: results.json
+          job-summary: true
+          comment-title: 'Resultados dos Testes E2E (Self-Hosted)'
+          icon-style: emojis
+          sections: 'failed, flaky, skipped, passed'
 
-            # upload do relatório HTML como artefato
-            - name: Upload do relatório HTML
-              uses: actions/upload-artifact@v4
-              if: always()
-              with:
-                  name: playwright-report
-                  path: playwright-report/
-                  retention-days: 7
+      # upload do relatório HTML como artefato
+      - name: Upload do relatório HTML
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

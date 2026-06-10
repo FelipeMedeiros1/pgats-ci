@@ -1,7 +1,7 @@
 # CI de Nível 04 - Integrada ao Build do codigo (após aprovação de PR)
 #teste2e - Playwright
 # nome da pipeline
-name: "Execução Integrada"
+name: 'Execução Integrada'
 
 # gatilhos / triggers - regras de disparo
 # gatilho integrado = push em branch protegida + aprovação de PR
@@ -20,9 +20,9 @@ jobs:
   #   lint:format → prettier valida formatação
   # -------------------------------------------------------
 
-  #nome do job  
+  #nome do job
   code-quality:
-    name: "Lint & Formatação"
+    name: 'Lint & Formatação'
     runs-on: ubuntu-latest
 
     steps:
@@ -31,7 +31,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24.x
-          cache: "npm"
+          cache: 'npm'
 
       - name: Instalando dependências
         run: npm ci
@@ -44,9 +44,8 @@ jobs:
       - name: Lint - Formatação (Prettier)
         run: npm run lint:format
 
-    
   unit-tests:
-    name: "Testes Unitários"
+    name: 'Testes Unitários'
     # só roda se o job de lint passou
     needs: [code-quality]
     # maquina onde o job vai rodar
@@ -71,11 +70,11 @@ jobs:
         run: yarn
 
       - name: Rodadndo testes unitários
-        run: yarn run test  
+        run: yarn run test
 
   #nome do job
   e2e-tests:
-    name: "Testes E2E"
+    name: 'Testes E2E'
     # só roda se o job de lint passou
     needs: [code-quality]
     # maquina onde o job vai rodar
@@ -121,9 +120,9 @@ jobs:
         with:
           report-file: results.json
           job-summary: true
-          comment-title: "Resultados dos Testes E2E"
+          comment-title: 'Resultados dos Testes E2E'
           icon-style: emojis
-          sections: "failed, flaky, skipped, passed"
+          sections: 'failed, flaky, skipped, passed'
 
       # upload do relatório HTML como artefato para download
       - name: Upload do relatório HTML
@@ -134,14 +133,14 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
-  # segue o padrão de pipeline integrada, onde o job de deploy só roda se os 
-  # testes unitários e e2e passarem com sucesso. 
+  # segue o padrão de pipeline integrada, onde o job de deploy só roda se os
+  # testes unitários e e2e passarem com sucesso.
   # O job de deploy é simulado com um echo, mas pode ser substituído por comandos reais de deploy.
   deploy:
-    name: "Deploy"
+    name: 'Deploy'
     needs: [unit-tests, e2e-tests]
     runs-on: ubuntu-latest
 
     steps:
       - name: Simulando Deploy
-        run: echo "Deploy realizado com sucesso!"       
+        run: echo "Deploy realizado com sucesso!"

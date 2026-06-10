@@ -1,13 +1,13 @@
 # CI de Nível 03 - disparo por deploy (após merge na main)
 #teste2e - Playwright
 # nome da pipeline
-name: "Execução por-deploy"
+name: 'Execução por-deploy'
 
 # gatilhos / triggers - regras de disparo
 # gatilho por conclusão de outra pipeline = workflow_run
 on:
   workflow_run:
-    workflows: ["Execução Manual"] # nome da pipeline de execução manual
+    workflows: ['Execução Manual'] # nome da pipeline de execução manual
     types:
       - completed
 
@@ -62,9 +62,9 @@ jobs:
         with:
           report-file: results.json
           job-summary: true
-          comment-title: "Resultados dos Testes E2E"
+          comment-title: 'Resultados dos Testes E2E'
           icon-style: emojis
-          sections: "failed, flaky, skipped, passed"
+          sections: 'failed, flaky, skipped, passed'
 
       # upload do relatório HTML como artefato para download
       - name: Upload do relatório HTML
