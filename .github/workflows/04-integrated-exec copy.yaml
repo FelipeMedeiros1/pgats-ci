@@ -1,0 +1,147 @@
+# CI de Nível 04 - Integrada ao Build do codigo (após aprovação de PR)
+#teste2e - Playwright
+# nome da pipeline
+name: "Execução Integrada"
+
+# gatilhos / triggers - regras de disparo
+# gatilho integrado = push em branch protegida + aprovação de PR
+
+on:
+  workflow_dispatch:
+
+#tarefas dentro da pipeline = jobs
+
+jobs:
+  # -------------------------------------------------------
+  # Job: Qualidade de código (lint)
+  # Roda ANTES dos testes e2e.
+  # Usa os scripts já configurados no package.json:
+  #   lint:ts     → tsc verifica tipos (jsconfig.json)
+  #   lint:format → prettier valida formatação
+  # -------------------------------------------------------
+
+  #nome do job  
+  code-quality:
+    name: "Lint & Formatação"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: "npm"
+
+      - name: Instalando dependências
+        run: npm ci
+
+      # verificação de tipos TypeScript
+      - name: Lint - TypeScript (tsc)
+        run: npm run lint:ts
+
+      # verificação de formatação com Prettier
+      - name: Lint - Formatação (Prettier)
+        run: npm run lint:format
+
+    
+  unit-tests:
+    name: "Testes Unitários"
+    # só roda se o job de lint passou
+    needs: [code-quality]
+    # maquina onde o job vai rodar
+    runs-on: ubuntu-latest
+
+    # passos do job
+    steps:
+      # clone do projeto
+      - uses: actions/checkout@v4
+
+      # instalção do node
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+
+      # instalação do Yarn
+      - name: Instalando Yarn
+        run: npm install -g yarn
+
+      #   instalação das dependências
+      - name: Instalando dependências
+        run: yarn
+
+      - name: Rodadndo testes unitários
+        run: yarn run test  
+
+  #nome do job
+  e2e-tests:
+    name: "Testes E2E"
+    # só roda se o job de lint passou
+    needs: [code-quality]
+    # maquina onde o job vai rodar
+    runs-on: ubuntu-latest
+
+    # passos do job
+    steps:
+      # clone do projeto
+      - uses: actions/checkout@v4
+
+      # instalção do node
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+
+      # instalação do Yarn
+      - name: Instalando Yarn
+        run: npm install -g yarn
+
+      #   instalação das dependências
+      - name: Instalando dependências
+        run: yarn
+
+      # instalação dos Browsers do Playwright
+      - name: Instalando Browsers do Playwright
+        run: yarn playwright install
+
+      # executar os testes e2e (gera results.json, results.xml e playwright-report/)
+      - name: Executando testes e2e
+        run: yarn run e2e
+
+      # -------------------------------------------------------
+      # Relatório de testes via Marketplace:
+      # daun/playwright-report-summary@v4
+      # https://github.com/marketplace/actions/playwright-report-comment
+      # Lê o results.json do Playwright e publica:
+      #   • sumário na aba "Summary" da execução (job-summary)
+      #   • comentário automático em Pull Requests (create-comment)
+      # -------------------------------------------------------
+      - name: Publicando resumo dos testes e2e
+        uses: daun/playwright-report-summary@v4
+        if: always()
+        with:
+          report-file: results.json
+          job-summary: true
+          comment-title: "Resultados dos Testes E2E"
+          icon-style: emojis
+          sections: "failed, flaky, skipped, passed"
+
+      # upload do relatório HTML como artefato para download
+      - name: Upload do relatório HTML
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  # segue o padrão de pipeline integrada, onde o job de deploy só roda se os 
+  # testes unitários e e2e passarem com sucesso. 
+  # O job de deploy é simulado com um echo, mas pode ser substituído por comandos reais de deploy.
+  deploy:
+    name: "Deploy"
+    needs: [unit-tests, e2e-tests]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Simulando Deploy
+        run: echo "Deploy realizado com sucesso!"       
