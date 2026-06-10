@@ -12,8 +12,41 @@ on:
 #tarefas dentro da pipeline = jobs
 
 jobs:
+    # -------------------------------------------------------
+    # Job 1: Qualidade de código (lint)
+    # Roda ANTES dos testes e2e.
+    # Usa os scripts já configurados no package.json:
+    #   lint:ts     → tsc verifica tipos (jsconfig.json)
+    #   lint:format → prettier valida formatação
+    # -------------------------------------------------------
+    code-quality:
+        name: "Lint & Formatação"
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 24.x
+                  cache: 'npm'
+
+            - name: Instalando dependências
+              run: npm ci
+
+            # verificação de tipos TypeScript
+            - name: Lint - TypeScript (tsc)
+              run: npm run lint:ts
+
+            # verificação de formatação com Prettier
+            - name: Lint - Formatação (Prettier)
+              run: npm run lint:format
+
     #nome do job
     e2e-tests:
+        name: "Testes E2E"
+        # só roda se o job de lint passou
+        needs: code-quality
         # maquina onde o job vai rodar
         runs-on: ubuntu-latest
 
